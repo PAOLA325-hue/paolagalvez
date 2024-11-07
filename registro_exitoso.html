@@ -1,0 +1,29 @@
+<script>
+    const usersDatabase = {}; // Simulación de base de datos
+
+    function handleRegister(event) {
+        event.preventDefault(); // Evita el envío del formulario
+
+        const name = document.getElementById('nombre').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        // Verifica el formato del correo electrónico
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailPattern.test(email)) {
+            alert('Por favor, ingresa un correo electrónico válido.');
+            return;
+        }
+
+        // Verifica si el usuario ya existe
+        if (usersDatabase[email]) {
+            alert('El correo electrónico ya está registrado.');
+            return;
+        }
+
+        // Guarda el usuario en la "base de datos"
+        usersDatabase[email] = password; // Almacena la contraseña asociada al correo
+        alert('Registro exitoso. Ahora puedes iniciar sesión.');
+        window.location.href = 'login.html'; // Redirige a la página de inicio de sesión
+    }
+</script>

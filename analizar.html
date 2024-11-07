@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analizador de Seguridad de URL</title>
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            transition: background-color 0.5s ease;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        header h1 {
+            font-size: 1.5em;
+            margin: 0;
+        }
+
+        .analyze-box {
+            margin-top: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button.btn {
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button.btn:hover {
+            background-color: #45a049;
+        }
+
+        #resultado {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        /* Footer styling */
+        footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        footer p {
+            font-size: 0.8em;
+            color: #333;
+        }
+
+        /* Estilos responsivos */
+        /* Pantallas grandes (escritorio) */
+        @media (min-width: 1024px) {
+            .container {
+                width: 50%;
+            }
+            header h1 {
+                font-size: 2em;
+            }
+            #resultado {
+                font-size: 1.5em;
+            }
+        }
+
+        /* Pantallas medianas (tabletas) */
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .container {
+                width: 80%;
+            }
+            header h1 {
+                font-size: 1.8em;
+            }
+            #resultado {
+                font-size: 1.3em;
+            }
+        }
+
+        /* Pantallas pequeñas (teléfonos) */
+        @media (max-width: 767px) {
+            header h1 {
+                font-size: 1.4em;
+            }
+            #resultado {
+                font-size: 1.2em;
+            }
+            button.btn {
+                padding: 12px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Analizador de Seguridad del URL</h1>
+        </header>
+        <div class="analyze-box">
+            <input type="text" id="url" placeholder="Introduce el URL" />
+            <button class="btn" onclick="analizarURL()">Analizar</button>
+        </div>
+        <div id="resultado"></div>
+    </div>
+
+    <script>
+        function analizarURL() {
+            const url = document.getElementById("url").value;
+            let resultado = document.getElementById("resultado");
+            let score = 0;
+            let mensaje = "";
+
+            const dominiosSeguros = [
+                "google.com", "facebook.com", "amazon.com", "microsoft.com", "apple.com",
+                "github.com", "linkedin.com", "twitter.com", "youtube.com", "instagram.com",
+                "netflix.com", "spotify.com", "paypal.com", "wikipedia.org", "openai.com",
+                "chatgpt.com", "reddit.com", "ebay.com", "zoom.us", "salesforce.com",
+                "dropbox.com", "twitch.tv", "coursera.org", "udemy.com", "salesforce.com"
+            ];
+
+            const dominiosAdvertencia = [
+                "adfly.com", "shorte.st", "linkbucks.com", "ouo.io", "bitly.com",
+                "mediafire.com", "4shared.com", "zippyshare.com", "mega.nz", "yadi.sk",
+                "tinyurl.com", "bit.do", "t.co", "rebrandly.com", "myurl.com",
+                "yourls.org", "l.facebook.com", "l.twitter.com", "l.instagram.com"
+            ];
+
+            const dominiosPeligrosos = [
+                "freesurvey.net", "login-verify.com", "account-secure.net", "free-prize.com",
+                "fakebank.com", "phishingsite.com", "scamsite.net", "fraudpage.org",
+                "bitconnect.co", "freebitco.in", "cryptominingfarm.com", "get-rich-quick.com",
+                "myfreecams.com", "porn300.com", "myadssite.com", "gamehack.com",
+                "hackerforum.com", "adultfriendfinder.com", "streamingmovies.com",
+                "clickbait.com", "torrents.io", "onlinegaming.com", "unsecured.com",
+                "freegiftcards.com", "prizesurveys.com", "fakemailgenerator.com", 
+                "whatismyipaddress.com", "cybersecurity.com", "securitycheck.com"
+            ];
+
+            let dominioURL;
+            try {
+                dominioURL = new URL(url).hostname.replace("www.", "");
+            } catch (error) {
+                resultado.innerHTML = "El URL ingresado no es válido.";
+                resultado.className = "result";
+                document.body.style.backgroundColor = "#d32f2f"; // Rojo fuerte para error
+                return;
+            }
+
+            if (url.startsWith("https://")) {
+                score += 20;
+            } else {
+                mensaje += "El sitio no usa HTTPS. ";
+            }
+
+            if (url.length <= 100) {
+                score += 20;
+            } else {
+                mensaje += "El URL es muy largo. ";
+            }
+
+            const palabrasSospechosas = ["login", "password", "free", "account", "verify"];
+            const regexSospechosas = new RegExp(palabrasSospechosas.join("|"), "i");
+            if (regexSospechosas.test(url)) {
+                mensaje += "El URL contiene palabras sospechosas. ";
+            } else {
+                score += 20;
+            }
+
+            if (dominiosSeguros.includes(dominioURL)) {
+                score += 40;
+                mensaje += "El dominio es reconocido como seguro.";
+                document.body.style.backgroundColor = "#388e3c"; // Verde fuerte
+            } else if (dominiosAdvertencia.includes(dominioURL)) {
+                score = 50;
+                mensaje = "Este dominio requiere precaución. Puede tener contenido engañoso.";
+                document.body.style.backgroundColor = "#ff9800"; // Naranja fuerte
+            } else if (dominiosPeligrosos.includes(dominioURL)) {
+                score = 0;
+                mensaje = "Este dominio es conocido como malicioso. Evita visitarlo.";
+                document.body.style.backgroundColor = "#d32f2f"; // Rojo fuerte
+            } else {
+                mensaje = "El dominio no está en la lista de sitios reconocidos. Procede con precaución.";
+                score = 40;
+                document.body.style.backgroundColor = "#ff9800"; // Naranja fuerte para desconocidos
+            }
+
+            if (score >= 70) {
+                resultado.innerHTML = `El sitio parece seguro con una puntuación de ${score}%. ${mensaje}`;
+            } else if (score >= 50) {
+                resultado.innerHTML = `El sitio tiene algunas señales de advertencia. Puntuación: ${score}%. ${mensaje}`;
+            } else {
+                resultado.innerHTML = `El sitio es potencialmente peligroso. Puntuación: ${score}%. ${mensaje}`;
+            }
+        }
+    </script>
+</body>
+</html>

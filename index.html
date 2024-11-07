@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenida - Seguridad Web</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        function aceptarTerminos() {
+            const termsAccepted = confirm("¿Aceptas los términos y condiciones?");
+            if (termsAccepted) {
+                window.location.href = 'login.html'; // Redirige a la página de inicio de sesión
+            } else {
+                alert("Debes aceptar los términos para continuar.");
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="logo">SEGURIDAD WEB</h1>
+        </header>
+
+        <div class="welcome-box">
+            <h2>Bienvenido a Seguridad Web</h2>
+            <p>Por favor, acepta los términos y condiciones para utilizar nuestra plataforma.</p>
+            <button onclick="aceptarTerminos()" class="btn">Aceptar Términos</button>
+        </div>
+    </div>
+
+    <footer>
+    </footer>
+</body>
+</html>
